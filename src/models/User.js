@@ -34,11 +34,7 @@ const userSchema = new mongoose.Schema(
         "Please enter a valid international phone number",
       ],
     },
-    otp: {
-      type: String,
-      expires: "5m", // Auto-expire after 5 minutes
-      default: null,
-    },
+    // Removed OTP field
   },
   { timestamps: true }
 );
