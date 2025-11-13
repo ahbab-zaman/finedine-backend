@@ -1,13 +1,19 @@
-import express from "express";
-import cors from "cors";
-import morgan from "morgan";
-import chalk from "chalk";
-import dayjs from "dayjs";
+const express = require("express");
+const cors = require("cors");
+const morgan = require("morgan");
+const chalk = require("chalk");
+const dayjs = require("dayjs");
 
 const app = express();
+const apiRouter = require("./routes/index");
 
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:5173"],
+    credentials: true,
+  })
+);
 
 // --- Custom morgan logger with colors ---
 morgan.token("time", () => dayjs().format("YYYY-MM-DD HH:mm:ss"));
@@ -24,7 +30,7 @@ app.use(
   morgan((tokens, req, res) => {
     return [
       chalk.gray(`[${tokens.time(req, res)}]`),
-      chalk.blue(tokens.method(req, res)),
+      chalk.cyan(tokens.method(req, res)),
       chalk.white(tokens.url(req, res)),
       tokens.statusColor(req, res),
       chalk.magenta(`${tokens["response-time"](req, res)} ms`),
@@ -33,8 +39,8 @@ app.use(
 );
 
 // --- Routes ---
-
+app.use("/api", apiRouter);
 // --- Error handler ---
 // app.use(errorHandler);
 
-export default app;
+module.exports = app;

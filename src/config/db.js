@@ -1,8 +1,8 @@
-import mongoose from "mongoose";
-import chalk from "chalk";
+const mongoose = require("mongoose");
+const chalk = require("chalk");
 
-export const connectDB = async () => {
-  console.log(chalk.blue("⏳ Connecting to MongoDB..."));
+const connectDB = async () => {
+ console.log(chalk.cyan("⏳ Connecting to MongoDB..."));
 
   try {
     await mongoose.connect(process.env.MONGO_URI);
@@ -14,3 +14,5 @@ export const connectDB = async () => {
     process.exit(1);
   }
 };
+
+module.exports = connectDB;
