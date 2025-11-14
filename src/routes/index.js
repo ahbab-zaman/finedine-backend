@@ -1,12 +1,20 @@
 const express = require("express");
-const authRouter = require("./auth"); 
-
 const apiRouter = express.Router();
-
+const authRouter = require("./auth");
+const menuRouter = require("./menuRoutes");
+const cartRouter = require("./cart");
 const routesConfig = [
   {
     path: "/auth",
     router: authRouter,
+  },
+  {
+    path: "/menus",
+    router: menuRouter,
+  },
+  {
+    path: "/cart",
+    router: cartRouter,
   },
 ];
 
