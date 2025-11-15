@@ -15,10 +15,9 @@ app.use(
   })
 );
 
-// Serve static files from src/uploads at /uploads/*
-app.use("/uploads", express.static(path.join(__dirname, "src/uploads")));
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
-// --- Custom morgan logger with colors ---
+
 morgan.token("time", () => dayjs().format("YYYY-MM-DD HH:mm:ss"));
 morgan.token("statusColor", (req, res) => {
   const status = res.statusCode;
