@@ -1,24 +1,67 @@
-const CartItem = require("../models/cart");
+const Cart = require("../models/Cart");
+const MenuItem = require("../models/MenuItem");
 
-exports.addToCart = async (userId, menuItemId, quantity = 1) => {
-  let cartItem = await CartItem.findOne({ userId, menuItemId });
-  if (cartItem) {
-    cartItem.quantity += quantity;
-    return cartItem.save();
-  } else {
-    cartItem = new CartItem({ userId, menuItemId, quantity });
-    return cartItem.save();
+class CartService {
+  static async getCartByUser(userId) {
+    let cart = await Cart.findOne({ user: userId }).populate({
+      path: "items.menuItem",
+      populate: { path: "category owner", select: "name" },
+    });
+    if (!cart) {
+      cart = new Cart({ user: userId, items: [] });
+      await cart.save();
+    }
+    return cart;
   }
-};
 
-exports.getUserCart = async (userId) => {
-  return CartItem.find({ userId }).populate("menuItemId");
-};
+  static async addItem(userId, menuItemId, quantity = 1) {
+    const menuItem = await MenuItem.findById(menuItemId);
+    if (!menuItem) throw new Error("Menu item not found");
 
-exports.updateCartItem = async (cartItemId, quantity) => {
-  return CartItem.findByIdAndUpdate(cartItemId, { quantity }, { new: true });
-};
+    let cart = await Cart.findOne({ user: userId });
+    if (!cart) {
+      cart = new Cart({ user: userId, items: [] });
+    }
 
-exports.removeCartItem = async (cartItemId) => {
-  return CartItem.findByIdAndDelete(cartItemId);
-};
+    const existing = cart.items.find(
+      (it) => it.menuItem.toString() === menuItemId
+    );
+    if (existing) {
+      existing.quantity += quantity;
+    } else {
+      cart.items.push({ menuItem: menuItemId, quantity });
+    }
+    await cart.save();
+    return this.getCartByUser(userId);
+  }
+
+  static async removeItem(userId, cartItemId) {
+    const cart = await Cart.findOne({ user: userId });
+    if (!cart) throw new Error("Cart not found");
+    cart.items = cart.items.filter((it) => it._id.toString() !== cartItemId);
+    await cart.save();
+    return this.getCartByUser(userId);
+  }
+
+  static async updateQuantity(userId, cartItemId, quantity) {
+    if (quantity < 1) throw new Error("Quantity must be at least 1");
+    const cart = await Cart.findOne({ user: userId });
+    if (!cart) throw new Error("Cart not found");
+    const item = cart.items.id(cartItemId);
+    if (!item) throw new Error("Cart item not found");
+    item.quantity = quantity;
+    await cart.save();
+    return this.getCartByUser(userId);
+  }
+
+  static async clearCart(userId) {
+    const cart = await Cart.findOne({ user: userId });
+    if (cart) {
+      cart.items = [];
+      await cart.save();
+    }
+    return this.getCartByUser(userId);
+  }
+}
+
+module.exports = CartService;

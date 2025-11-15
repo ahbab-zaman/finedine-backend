@@ -3,7 +3,7 @@ const cors = require("cors");
 const morgan = require("morgan");
 const chalk = require("chalk");
 const dayjs = require("dayjs");
-
+const path = require("path");
 const app = express();
 const apiRouter = require("./routes/index");
 
@@ -14,6 +14,9 @@ app.use(
     credentials: true,
   })
 );
+
+// Serve static files from src/uploads at /uploads/*
+app.use("/uploads", express.static(path.join(__dirname, "src/uploads")));
 
 // --- Custom morgan logger with colors ---
 morgan.token("time", () => dayjs().format("YYYY-MM-DD HH:mm:ss"));

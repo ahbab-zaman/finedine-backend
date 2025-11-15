@@ -1,8 +1,9 @@
 const express = require("express");
 const apiRouter = express.Router();
 const authRouter = require("./auth");
-const menuRouter = require("./menuRoutes");
+const menuRouter = require("./menu");
 const cartRouter = require("./cart");
+const categoryRouter = require("./category");
 const routesConfig = [
   {
     path: "/auth",
@@ -15,6 +16,10 @@ const routesConfig = [
   {
     path: "/cart",
     router: cartRouter,
+  },
+  {
+    path: "/category",
+    router: categoryRouter,
   },
 ];
 

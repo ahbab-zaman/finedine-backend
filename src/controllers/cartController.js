@@ -1,46 +1,62 @@
-const cartService = require("../services/cartService");
+const CartService = require("../services/cartService");
 
-// Add item to cart
-exports.addCartItem = async (req, res) => {
-  try {
-    const { userId, menuItemId, quantity } = req.body;
-    const cartItem = await cartService.addToCart(userId, menuItemId, quantity);
-    res.status(200).json({ success: true, cartItem });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-  }
-};
-
-// Get all cart items for a user
 exports.getCart = async (req, res) => {
   try {
-    const { userId } = req.params;
-    const cartItems = await cartService.getUserCart(userId);
-    res.status(200).json({ success: true, cartItems });
+    const cart = await CartService.getCartByUser(req.user._id);
+    res.json({ success: true, cart });
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, message: err.message });
   }
 };
 
-// Update quantity
-exports.updateCart = async (req, res) => {
+exports.addToCart = async (req, res) => {
+  try {
+    const { menuItemId, quantity } = req.body;
+    if (!menuItemId)
+      return res
+        .status(400)
+        .json({ success: false, message: "menuItemId required" });
+    const cart = await CartService.addItem(
+      req.user._id,
+      menuItemId,
+      parseInt(quantity || 1, 10)
+    );
+    res.status(201).json({ success: true, cart });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
+
+exports.removeFromCart = async (req, res) => {
+  try {
+    const { cartItemId } = req.params;
+    const cart = await CartService.removeItem(req.user._id, cartItemId);
+    res.json({ success: true, cart });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};
+
+exports.updateCartQuantity = async (req, res) => {
   try {
     const { cartItemId } = req.params;
     const { quantity } = req.body;
-    const cartItem = await cartService.updateCartItem(cartItemId, quantity);
-    res.status(200).json({ success: true, cartItem });
+    const cart = await CartService.updateQuantity(
+      req.user._id,
+      cartItemId,
+      parseInt(quantity, 10)
+    );
+    res.json({ success: true, cart });
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    res.status(400).json({ success: false, message: err.message });
   }
 };
 
-// Remove item from cart
-exports.removeCart = async (req, res) => {
+exports.clearCart = async (req, res) => {
   try {
-    const { cartItemId } = req.params;
-    await cartService.removeCartItem(cartItemId);
-    res.status(200).json({ success: true, message: "Item removed from cart" });
+    const cart = await CartService.clearCart(req.user._id);
+    res.json({ success: true, cart });
   } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, message: err.message });
   }
 };
