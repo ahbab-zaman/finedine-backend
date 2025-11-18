@@ -43,6 +43,10 @@ app.get("/test", (req, res) => {
 });
 // --- Routes ---
 app.use("/api", apiRouter);
+
+app.get("/test", (req, res) => {
+  res.status(200).json({ message: "Server is running successfully!" });
+});
 // --- Error handler ---
 // app.use(errorHandler);
 
