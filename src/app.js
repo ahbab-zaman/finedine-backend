@@ -17,7 +17,6 @@ app.use(
 
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
-
 morgan.token("time", () => dayjs().format("YYYY-MM-DD HH:mm:ss"));
 morgan.token("statusColor", (req, res) => {
   const status = res.statusCode;
@@ -39,7 +38,9 @@ app.use(
     ].join(" ");
   })
 );
-
+app.get("/test", (req, res) => {
+  res.status(200).json({ message: "Server is running successfully!" });
+});
 // --- Routes ---
 app.use("/api", apiRouter);
 // --- Error handler ---
