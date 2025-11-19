@@ -10,7 +10,7 @@ const apiRouter = require("./routes/index");
 app.use(express.json());
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: ["http://localhost:5173", "https://fine-dine-ahbab.netlify.app"],
     credentials: true,
   })
 );
