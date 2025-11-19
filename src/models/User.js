@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema(
       required: [true, "Name is required"],
       trim: true,
       minlength: [2, "Name must be at least 2 characters"],
+      maxlength: [50, "Name must be at most 50 characters"],
     },
     email: {
       type: String,
@@ -33,6 +34,10 @@ const userSchema = new mongoose.Schema(
         /^\+[1-9]\d{1,14}$/,
         "Please enter a valid international phone number",
       ],
+    },
+    birthdate: {
+      type: Date,
+      required: false,
     },
     // Removed OTP field
   },
