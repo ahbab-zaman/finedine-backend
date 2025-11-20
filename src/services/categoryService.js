@@ -10,7 +10,7 @@ class CategoryService {
   }
 
   static async getAllCategories() {
-    return Category.find().sort({ name: 1 });
+    return Category.find().sort({ name: -1 });
   }
 
   static async getById(id) {
