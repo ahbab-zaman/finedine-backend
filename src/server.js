@@ -10,7 +10,7 @@ connectDB()
   .then(() => {
     app.listen(PORT, () => {
       console.log(chalk.greenBright("🚀 Server running successfully!"));
-      console.log(chalk.magenta(`🌐 URL: http://localhost:${PORT}`));
+      console.log(chalk.magenta(`🌐 URL: https://localhost:${PORT}`));
       console.log(chalk.gray("-------------------------------------------"));
     });
   })
